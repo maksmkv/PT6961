@@ -18,53 +18,79 @@
 uint8_t DIN = 4; //DIN
 uint8_t CLK = 3; //CLK
 uint8_t CS = 2; //CS
-   
+
+const char DISP[16] {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x58, 0x5e, 0x79, 0x71};
+
+void command1() //set display to 6x12 segments
+{
+    pinMode(CS, LOW);  //
+    shiftOut(DIN, CLK, LSBFIRST, 0x02); // SET COMMAND 1
+    digitalWrite(CS, HIGH); //
+    Serial.print("command1\n");
+   // pinMode(CS, LOW);  //
+   // shiftOut(DIN, CLK, LSBFIRST, 0x40); // SET COMMAND 1
+   // digitalWrite(CS, HIGH); //
+}  
+
+void command2() {
+    pinMode(CS, LOW);  //
+    shiftOut(DIN, CLK, LSBFIRST, 0x40); // SET COMMAND 2 write
+    digitalWrite(CS, HIGH); //
+    Serial.print("command2\n");
+}
+
+void command3() // Заполнение RAM нулями SET COMMAND 2
+{
+    digitalWrite(CS,LOW);
+    shiftOut(DIN, CLK, LSBFIRST, 0xC0);
+      for(int i=0; i<8; i++)
+      {
+        shiftOut(DIN, CLK, LSBFIRST, 0x00);
+      }
+    digitalWrite(CS,HIGH); 
+    Serial.print("command3\n");
+}
+
+void command4() //display on, max brightness
+{
+    pinMode(CS, LOW);  //
+    shiftOut(DIN, CLK, LSBFIRST, 0x8F); // SET COMMAND 4
+    digitalWrite(CS, HIGH); //
+    Serial.print("command4\n");
+}
+
+void displayDigit()
+{   for(int i=0; i<16; i++)
+  {
+     digitalWrite(CS,LOW);
+     shiftOut(DIN, CLK, LSBFIRST, 0xC0); 
+     shiftOut(DIN, CLK, LSBFIRST,(DISP[i]));
+     digitalWrite(CS,HIGH); 
+     delay(500);
+     Serial.print("displayDigit\n");
+    }
+}
+
 
 void setup() {
   pinMode(DIN, OUTPUT);
   pinMode(CLK, OUTPUT);
   pinMode(CS, OUTPUT);
-  
-  //страница 16 datasheet из 25
-  delay(200); //задержка 200 мс
-  
-  pinMode(CS, LOW);  //
-  shiftOut(DIN, CLK, LSBFIRST, 0x01000000); // SET COMMAND 2
-  digitalWrite(CS, HIGH); //
 
-  initialise(); // SET COMMAND 2
-    
-  pinMode(CS, LOW);  //
-  shiftOut(DIN, CLK, LSBFIRST, char(0x02)); // SET COMMAND 1
-  digitalWrite(CS, HIGH); //
+Serial.begin(9600);
 
-  pinMode(CS, LOW);  //
-  shiftOut(DIN, CLK, LSBFIRST, 0x00000001); // SET COMMAND 4
-  digitalWrite(CS, HIGH); //
-}
-
-void loop() {
+  command2();
+  command3();
+  command1();
+  command4();
 
 }
 
-
-void initialise() // Заполнение RAM нулями SET COMMAND 2
+void loop() 
 {
   digitalWrite(CS,LOW);
-  shiftOut(dataPin, clockPin, LSBFIRST, 0xC0);
-    for(int i=0; i<8; i++)
-    {
-      shiftOut(dataPin, CLK, LSBFIRST, 0x00);
-    }
-  digitalWrite(CS,HIGH); 
-}
- 
+  shiftOut(DIN, CLK, LSBFIRST, 0x4f);
+  digitalWrite(CS,HIGH);   
 
-void writePT()
-{
-}
-
-void readPT()
-{
-  
+  displayDigit(); 
 }

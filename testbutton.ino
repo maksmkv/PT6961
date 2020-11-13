@@ -58,7 +58,7 @@ void command2() {
     digitalWrite(CS, LOW);  //
     digitalWrite(CLK, LOW);
     digitalWrite(DIN, LOW);
-    shiftOut(DIN, CLK, LSBFIRST, 0b01000000); // SET COMMAND 2 write
+     shiftOut(DIN, CLK, LSBFIRST, 0b01000000); // SET COMMAND 2 write
     digitalWrite(CS, HIGH);  //
     digitalWrite(CLK, HIGH);
     digitalWrite(DIN, HIGH);
@@ -170,12 +170,10 @@ void readKeyData(uint16_t * data) {
     digitalWrite(CS, LOW);  //
     digitalWrite(CLK, LOW);
     digitalWrite(DIN, LOW);
-     shiftOut(DOUT, CLK, LSBFIRST, 0x42);  // чтение данных
-     pinMode(DOUT, INPUT);
-     delayMicroseconds(1);
-     * data = shiftIn(DOUT, CLK, LSBFIRST) + (shiftIn(DOUT, CLK, LSBFIRST) << 8);
-    pinMode(DOUT, INPUT);
-      digitalWrite(CS, HIGH);  //
+		shiftOut(DIN, CLK, LSBFIRST, 0x42);  // чтение данных
+    delayMicroseconds(1);
+    *data = shiftIn(DOUT, CLK, LSBFIRST) + (shiftIn(DOUT, CLK, LSBFIRST) << 8);
+    digitalWrite(CS, HIGH);  //
     digitalWrite(CLK, HIGH);
     digitalWrite(DIN, HIGH);
 }
@@ -186,8 +184,11 @@ void setup() {
   pinMode(DIN, OUTPUT);
   pinMode(CLK, OUTPUT);
   pinMode(CS, OUTPUT);
+  
+  pinMode(DOUT, INPUT);
   digitalWrite(DIN, HIGH);
   digitalWrite(CLK, HIGH);
+
 
   pinMode(DOUT, INPUT_PULLUP);  //кнопка 
 

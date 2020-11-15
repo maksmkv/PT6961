@@ -170,9 +170,7 @@ void printTime()
   ledDisplay.setValue(hour*100+minute);
   ledDisplay.toggleColon();
   delay (1000);  
-  ledDisplay.toggleColon();
-  delay(1000);
-  ledDisplay.reset();
+  //ledDisplay.reset();
 }
 
 
@@ -253,7 +251,7 @@ void setup()
   pinMode(DOUT, INPUT_PULLUP);  //кнопка 
   
   second = 00;
-  minute = 02;
+  minute = 38;
   hour = 14;
   dayOfWeek = 7;
   dayOfMonth = 15;
